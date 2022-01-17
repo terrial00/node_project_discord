@@ -1,0 +1,19 @@
+{
+  "name": "node_project_discord",
+  "version": "1.0.0",
+  "description": "",
+  "main": "discord.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "^0.7.0",
+    "discord-reply": "^0.1.2",
+    "discord.js": "^12.5.3",
+    "distube": "^3.0.5",
+    "express": "^4.17.2",
+    "ffmpeg-static": "^4.4.1"
+  }
+}
