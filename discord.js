@@ -1,15 +1,15 @@
-const Discord = require('discord.js'); // 모듈을 가져온 뒤,
-const voice = require('@discordjs/voice');
-const DisTube = require('distube');
+const Discord = require('discord.js'); //discord 모듈 호출
+const voice = require('@discordjs/voice'); //discord 음성 채널 모듈 호출
+const DisTube = require('distube'); //discord music 모듈 호출
 
-const client = new Discord.Client({
+const client = new Discord.Client({ //discord bot 권한 설정
     intents: [
         'GUILDS', 'GUILD_VOICE_STATES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS'
     ],
     partials: ['MESSAGE', 'CHANNEL', 'REACTION']
 })
 
-const distube = new DisTube.default(client, {
+const distube = new DisTube.default(client, { //distube 설정
     searchSongs: 1,
     searchCooldown: 30,
     leaveOnEmpty: true,
@@ -44,6 +44,21 @@ client.on('message', async (message) => { // 이벤트 리스너 (message 이벤
         .trim()
         .split(/ +/g);
     const command = args.shift();
+
+    if (["help", "h"].includes(command)) {
+        message
+            .channel
+            .send(
+                '[p,play] - 테리님. 노래 틀어줘요.\n'+
+                '[l ,leave] - 잘가요. 테-리-님.\n' +
+                '[s,stop] - 리혐 ㅁ... 아니 노래 멈춰!.\n' +
+                '[pause] - 노래 다시 틀어주세요.\n'+
+                '[skip] - 다음 노래로 넘어갑니다.\n'+
+                '[list] - 다음 노래 몰?루\n' +
+                '[auto] - 지금 노래와 연관된 노래를 추가합니다\n' +
+                '[파티모집,파티] - ++파티모집 으로 같이 게임할 사람들을 모집해보세요!'
+            )
+    }
 
     if (["p", "play"].includes(command)) {
         try{
@@ -131,20 +146,6 @@ client.on('message', async (message) => { // 이벤트 리스너 (message 이벤
         }
         
     }
-    if (["help", "h"].includes(command)) {
-        message
-            .channel
-            .send(
-                '[p,play] - 테리님. 노래 틀어줘요.\n'+
-                '[l ,leave] - 잘가요. 테-리-님.\n' +
-                '[s,stop] - 리혐 ㅁ... 아니 노래 멈춰!.\n' +
-                '[pause] - 노래 다시 틀어주세요.\n'+
-                '[skip] - 다음 노래로 넘어갑니다.\n'+
-                '[list] - 다음 노래 몰?루\n' +
-                '[auto] - 지금 노래와 연관된 노래를 추가합니다\n' +
-                '[파티모집,파티] - ++파티모집 으로 같이 게임할 사람들을 모집해보세요!'
-            )
-    }
 
     if (["파티모집", "파티"].includes(command)) {
         console.log(
@@ -169,26 +170,25 @@ client.on('message', async (message) => { // 이벤트 리스너 (message 이벤
 });
 
 client.on(
-    'messageReactionAdd', async (reaction, user) => {
+    'messageReactionAdd', async (reaction, user) => { //discord 반응하기 Listener
 
     if (user.bot) {
+        //반응한 user가 bot이면 종료
             return;
         }
         if (!user.bot) {
-            //console.log(Array.from(reaction.message.reactions.cache)[0][1].users.cache);
-
-            if ('⚔' === (reaction.emoji.name)) {
+            if ('⚔' === (reaction.emoji.name)) { //반응하기(파티모집 참여하기)
                 if(reaction.partial){
                     await reaction.fetch().then();
                 }
             }
-            if ('❌' === (reaction.emoji.name)) {
+            if ('❌' === (reaction.emoji.name)) { //파티모집 삭제하기
                 reaction
                     .message
                     .delete();
             }
 
-            if (reaction.emoji.name === "🔍") {
+            if (reaction.emoji.name === "🔍") { //반응한 인원 확인
                 const message = reaction.message;
                 let maps = [];
 
@@ -232,7 +232,7 @@ client.on(
                 }
             }
 
-            if ('🎺' === (reaction.emoji.name)) {
+            if ('🎺' === (reaction.emoji.name)) { //반응한 인원 호출
                 const message = reaction.message;
                 let maps = [];
                 if (message.partial) {
@@ -280,29 +280,6 @@ client.on(
 
     }
 );
-
-var getReactedUsers = async (msg, channelID, messageID, emoji) => {
-    let cacheChannel = msg
-        .guild
-        .channels
-        .cache
-        .get(channelID);
-    if (cacheChannel) {
-        cacheChannel
-            .messages
-            .fetch(messageID)
-            .then(reactionMessage => {
-                reactionMessage
-                    .reactions
-                    .resolve(emoji)
-                    .users
-                    .fetch()
-                    .then(userList => {
-                        return userList.map((user) => user.id)
-                    });
-            });
-    }
-}
 
 const getAuthorDisplayName = async (msg) => {
     const member = await msg
